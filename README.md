@@ -1,10 +1,10 @@
 # UNI-T UT181A DMM USB Communication Tool
 
 - Features: list records, export records to CSV files
-- Platform: Linux (tested on PC, Raspberry Pi 2/3)
+- Platform: Linux (tested on PC, Raspberry Pi 2/3, Debian 8/9)
 - Ref: [How to hack UT181A protocol (Chinese)](http://www.freebuf.com/articles/terminal/145017.html)
 - Ver: 0.1
-- Updated: 9/9/2017
+- Updated: 12/13/2017
 - Created: 5/11/2017
 - Author: loblab
 
@@ -36,15 +36,19 @@ cd ut181a
 make
 ```
 
-### For ARM (Raspberry Pi)
+### Special for ARM (Raspberry Pi)
 
-Modify following lines of slabhiddevice/Makefile, slabhidtouart/Makefile before build
-```make
-LIB_ARCH?=$(shell uname -m)
-BUILDPATH?=$(BUILD)/lib/$(LIB_ARCH)
-OBJPATH?=$(BUILD)/obj/$(LIB_ARCH)
-ARCHFLAG=
+Modify slabhiddevice/Makefile, slabhidtouart/Makefile before build, using the patch file
+
+```bash
+cd slabhiddevice
+patch -b Makefile <ut181a-dir>/slib_sdk/Makefile.arm.patch
+
+cd slabhidtouart
+patch -b Makefile <ut181a-dir>/slib_sdk/Makefile.arm.patch
 ```
+
+BTW, use "make -f Makefile.orig" to build x86/64 version after patching.
 
 ## Configuration
 

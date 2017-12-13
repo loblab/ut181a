@@ -1,0 +1,14 @@
+13c13
+< LIB_ARCH?=$(shell uname -m | sed s/x86_//)
+---
+> LIB_ARCH?=$(shell uname -m)
+16,17c16,17
+< BUILDPATH?=$(BUILD)/lib/x86_$(LIB_ARCH)
+< OBJPATH?=$(BUILD)/obj/x86_$(LIB_ARCH)
+---
+> BUILDPATH?=$(BUILD)/lib/$(LIB_ARCH)
+> OBJPATH?=$(BUILD)/obj/$(LIB_ARCH)
+37c37
+< ARCHFLAG=-m$(LIB_ARCH)
+---
+> ARCHFLAG=
