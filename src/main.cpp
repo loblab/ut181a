@@ -13,11 +13,7 @@
 // limitations under the License.
 
 #include <stdio.h>
-#include <string>
 #include <string.h>
-#include <vector>
-#include <iostream>
-#include <algorithm>
 #include <signal.h>
 #include <unistd.h>
 
@@ -25,8 +21,6 @@
 #include "reader.h"
 #include "writer.h"
 #include "debug.h"
-
-using namespace std;
 
 void SigintHandler(int param)
 {
@@ -79,7 +73,7 @@ int main(int argc, char* argv[])
     UT181A::Device dmm;
     if (!dmm.Open())
     {
-        cerr << "Failed to open UT181A DMM. Please check device connection." << endl;
+        printf("Failed to open UT181A DMM. Please check device connection.\n");
         return -1;
     }
     
