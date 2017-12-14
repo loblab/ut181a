@@ -37,8 +37,8 @@ public:
     bool GetUartConfig(DWORD& baudRate, BYTE& dataBits, BYTE& parity, BYTE& stopBits, BYTE& flowControl);
     bool SetTimeouts(int msRead, int msWrite);
     bool FlushBuffers();
-    DWORD Read(BYTE* buffer, DWORD size);
-    DWORD Write(const void* buffer, DWORD size);
+    int Read(BYTE* buffer, DWORD size);
+    int Write(const void* buffer, DWORD size);
     bool ReadLatch(WORD& latchValue);
     bool WriteLatch(WORD latchValue, WORD latchMask);
 

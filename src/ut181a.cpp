@@ -31,8 +31,10 @@ bool Device::SendPacket(Packet& packet)
     BYTE buffer[BUFFER_SIZE];
     if (!packet.Dump(buffer, BUFFER_SIZE))
         return false;
-    DWORD dataSize = packet.GetSize();
-    DWORD wrSize = m_tx.Write(buffer, dataSize);
+    int dataSize = packet.GetSize();
+    int wrSize = m_tx.Write(buffer, dataSize);
+    if (wrSize < 0)
+        return false;
     if (wrSize == dataSize)
     {
 #ifdef _DEBUG
@@ -105,7 +107,7 @@ void Device::Close()
 bool Device::StartMonitor()
 {
     m_tx.FlushBuffers();
-    m_tx.SetTimeouts(1, 1000);
+    m_tx.SetTimeouts(128, 1000);
     
     MonitorCommand cmd(1);
     if (!SendPacket(cmd))
@@ -114,7 +116,8 @@ bool Device::StartMonitor()
     //ignore remaining data in the buffer
     const DWORD respSize = 10;
     BYTE buffer[respSize];
-    m_tx.Read(buffer, respSize);
+    if (m_tx.Read(buffer, respSize) < 0)
+        return false;
 
     return m_tx.SetTimeouts(256, 1000);
 }
@@ -134,17 +137,20 @@ int Device::ReadPacket(BYTE* buffer, int size)
     while (len == 0)
     {
         p = buffer;
-        if (!m_tx.Read(p, 1))
+        int ret = m_tx.Read(p, 1);
+        if (ret < 0) // timeout
+            return 0;
+        if (ret == 0)
             continue;
         if (*p != Packet::START_BYTE1)
             continue;
         p++;
-        if (!m_tx.Read(p, 1))
+        if (m_tx.Read(p, 1) <= 0)
             continue;
         if (*p != Packet::START_BYTE2)
             continue;
         p++;
-        if (!m_tx.Read(p, 2))
+        if (m_tx.Read(p, 2) <= 0)
             continue;
         WORD t1 = *p++;
         WORD t2 = *p++;
@@ -156,8 +162,9 @@ int Device::ReadPacket(BYTE* buffer, int size)
         }
     }
     DWORD remain = len;
-    while (remain > 0) {
-        DWORD actual = m_tx.Read(p, remain);
+    while (remain > 0)
+    {
+        int actual = m_tx.Read(p, remain);
         if (actual == 0)
         {
             printf("Could not read data, expected %d bytes\n", remain);

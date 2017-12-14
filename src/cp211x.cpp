@@ -302,32 +302,40 @@ bool CP211x::SetUartConfig(DWORD baudRate, BYTE dataBits, BYTE parity, BYTE stop
     return true;
 }
 
-DWORD CP211x::Read(BYTE* buffer, DWORD size)
+int CP211x::Read(BYTE* buffer, DWORD size)
 {
     DWORD actual;
     HID_UART_STATUS status;
     status = HidUart_Read(m_hDevice, buffer, size, &actual);
-    if ((status == HID_UART_SUCCESS || status == HID_UART_READ_TIMED_OUT) &&
-         actual > 0)
-     {
-         //dumpBin("Input", buffer, actual);
-         return actual;
-     }
-     return 0;
+    if (status == HID_UART_SUCCESS)
+    {
+        //dumpBin("Input", buffer, actual);
+        return (int)actual;
+    }
+    if (status == HID_UART_READ_TIMED_OUT)
+    {
+        printf("Read timeout: %d\n", actual);
+        return actual > 0 ? actual : -1;
+    }
+    return 0;
 }
 
-DWORD CP211x::Write(const void* buffer, DWORD size)
+int CP211x::Write(const void* buffer, DWORD size)
 {
     DWORD actual;
     HID_UART_STATUS status;
     status = HidUart_Write(m_hDevice, (BYTE*)buffer, size, &actual);
-    if ((status == HID_UART_SUCCESS || status == HID_UART_WRITE_TIMED_OUT) &&
-         actual > 0)
-     {
-         //dumpBin("Output", buffer, actual);
-         return actual;
-     }
-     return 0;
+    if (status == HID_UART_SUCCESS)
+    {
+        //dumpBin("Output", buffer, actual);
+        return (int)actual;
+    }
+    if (status == HID_UART_WRITE_TIMED_OUT)
+    {
+        printf("Write timeout: %d\n", actual);
+        return actual > 0 ? actual : -1;
+    }
+    return 0;
 }
 
 bool CP211x::ReadLatch(WORD& latchValue)
