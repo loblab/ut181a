@@ -179,14 +179,14 @@ int Device::ReadPacket(BYTE* buffer, int size)
     return len + 4;
 }
 
-bool Device::Monitor(int loop)
+bool Device::Monitor(int& quit_flag)
 {
     if (!StartMonitor())
         return false;
 
     BYTE buffer[BUFFER_SIZE];
     MonitorPacket packet;
-    for (int i = 0; i < loop; i++)
+    while (!quit_flag)
     {
         int len = ReadPacket(buffer, BUFFER_SIZE);
         if (len < 1)
@@ -249,20 +249,22 @@ DWORD Device::ShowRecordInfo(WORD index)
     return b ? packet.m_samples : 0;
 }
 
-int Device::ListRecord()
+int Device::ListRecord(int& quit_flag)
 {
     WORD total = GetRecordCount();
     printf("Total: %d record%c\n", total, (total > 1 ? 's' : ' '));
 
     for (int i = 1; i <= total; i++)
     {
+        if (quit_flag)
+            break;
         if (!ShowRecordInfo(i))
             return -1;
     }
     return total;
 }
 
-bool Device::ReceiveRecord(WORD index)
+bool Device::ReceiveRecord(WORD index, int& quit_flag)
 {
     printf("Receive record #%d...\n", index);
     DWORD total = ShowRecordInfo(index);
@@ -277,8 +279,11 @@ bool Device::ReceiveRecord(WORD index)
     t1 = time(NULL);
     for (DWORD item = 1; item <= total; item += 250)
     {
+        if (quit_flag)
+            break;
         RecDataCommand cmd(index, item);
-        if (!SendPacket(cmd)) {
+        if (!SendPacket(cmd))
+        {
             fs.close();
             return false;
         }
@@ -288,9 +293,10 @@ bool Device::ReceiveRecord(WORD index)
         dumpBin("Input", buffer, actual, false);
 #endif //_DEBUG
         RecDataPacket packet;
-        if (packet.Load(buffer, actual)) {
-        int count = item + packet.GetCount() - 1;
-        t2 = time(NULL);
+        if (packet.Load(buffer, actual))
+        {
+            int count = item + packet.GetCount() - 1;
+            t2 = time(NULL);
             if (total < 100)
                 packet.Show(item);
             else
@@ -300,7 +306,7 @@ bool Device::ReceiveRecord(WORD index)
     }
 
     fs.close();
-    printf("Completed record #%d.\n", index);
+    printf("%s record #%d.\n", (quit_flag ? "Aborted" : "Completed"), index);
     return true;
 }
 

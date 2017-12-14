@@ -32,12 +32,12 @@ public:
     bool StartMonitor();
     bool StopMonitor();
 
-    bool Monitor(int loop);
+    bool Monitor(int& quit_flag);
 
     WORD GetRecordCount();
     DWORD ShowRecordInfo(WORD index);
-    int ListRecord();
-    bool ReceiveRecord(WORD index);
+    int ListRecord(int& quit_flag);
+    bool ReceiveRecord(WORD index, int& quit_flag);
 
 public:
     void Test();

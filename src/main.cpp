@@ -212,22 +212,27 @@ int Program::Run()
 {
     if (m_args.monitor)
     {
-        bool b = m_dmm.Monitor(10);
+        fprintf(stderr, "Ctrl-C to quit the monitor\n");
+        bool b = m_dmm.Monitor(quit_flag);
         return b ? 0 : -1;
     }
 
     if (m_args.list)
     {
-        m_dmm.ListRecord();
+        fprintf(stderr, "Ctrl-C to abort if it takes too long\n");
+        m_dmm.ListRecord(quit_flag);
         return 0;
     }
 
     if (m_args.item_count > 0)
     {
+        fprintf(stderr, "Ctrl-C to abort the long operation\n");
         for (int i = 0; i < m_args.item_count; i++)
         {
+            if (quit_flag)
+                break;
             int index = atoi(m_args.items[i]);
-            m_dmm.ReceiveRecord(index);
+            m_dmm.ReceiveRecord(index, quit_flag);
         }
         return 0;
     }
