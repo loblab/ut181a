@@ -1,5 +1,5 @@
 # UT181A makefile
-# loblab, 5/13/2017
+# loblab, 12/15/2017
 
 TARGET=ut181a
 ARCH=$(shell uname -m)
@@ -9,13 +9,11 @@ SRCDIR = ./src
 
 all: $(TARGET)
 
-#MYFLAGS ?= -D_DEBUG
-
 CC       ?= gcc
-CFLAGS   ?= -Wall -g $(ARCHFLAG) $(MYFLAGS)
+CFLAGS   ?= -Wall -g $(ARCHFLAG)
 
 CXX      ?= g++
-CXXFLAGS ?= -Wall -g $(ARCHFLAG) $(MYFLAGS)
+CXXFLAGS ?= -Wall -g $(ARCHFLAG)
 
 COBJS     = 
 CPPOBJS   = $(addprefix $(TMPDIR)/, debug.o reader.o writer.o packet.o cp211x.o ut181a.o main.o)

@@ -37,9 +37,8 @@ bool Device::SendPacket(Packet& packet)
         return false;
     if (wrSize == dataSize)
     {
-#ifdef _DEBUG
-        dumpBin("Output", buffer, dataSize, false);
-#endif //_DEBUG
+        if (g_debug >= 2)
+            dumpBin("Output", buffer, dataSize, false);
         return true;
     }
     dumpBin("Failed to output", buffer, dataSize, false);
@@ -217,10 +216,9 @@ WORD Device::GetRecordCount()
 
     const DWORD respSize = 12;
     BYTE buffer[respSize];
-    int actual    = ReadPacket(buffer, respSize);
-#ifdef _DEBUG
-    dumpBin("Input", buffer, actual, false);
-#endif //_DEBUG
+    int actual = ReadPacket(buffer, respSize);
+    if (g_debug >= 2)
+        dumpBin("Input", buffer, actual, false);
 
     RecordCountPacket packet;
     if (!packet.Load(buffer, actual))
@@ -243,16 +241,16 @@ DWORD Device::ShowRecordInfo(WORD index)
 
     BYTE buffer[BUFFER_SIZE];
     int actual    = ReadPacket(buffer, BUFFER_SIZE);
-#ifdef _DEBUG
-    dumpBin("Input", buffer, actual, true);
-#endif //_DEBUG
+    if (g_debug >= 2)
+        dumpBin("Input", buffer, actual, true);
     RecInfoPacket packet;
     bool b = packet.Load(buffer, actual);
-#ifndef _DEBUG
-    printf("%02d - ", index);
-    if (b)
-        packet.Show();
-#endif //_DEBUG
+    if (g_debug == 0)
+    {
+        printf("%02d - ", index);
+        if (b)
+            packet.Show();
+    }
     return b ? packet.m_samples : 0;
 }
 
@@ -296,9 +294,8 @@ bool Device::ReceiveRecord(WORD index, int& quit_flag)
         }
 
         int actual    = ReadPacket(buffer, BUFFER_SIZE);
-#ifdef _DEBUG
-        dumpBin("Input", buffer, actual, false);
-#endif //_DEBUG
+        if (g_debug >= 2)
+            dumpBin("Input", buffer, actual, false);
         RecDataPacket packet;
         if (packet.Load(buffer, actual))
         {

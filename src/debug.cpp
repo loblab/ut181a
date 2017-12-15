@@ -17,6 +17,8 @@
 #include <string.h>
 #include "debug.h"
 
+int g_debug;
+
 void dumpBin(const char* title, const void* pData, int len, bool outText)
 {
     if (0 == len)

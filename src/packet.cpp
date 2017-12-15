@@ -14,6 +14,7 @@
 
 #include <stdio.h>
 #include "packet.h"
+#include "debug.h"
 
 using namespace std;
 using namespace UT181A;
@@ -164,20 +165,27 @@ void RecInfoPacket::Show()
     int hh, mm, ss;
     time_duration(m_duration, hh, mm, ss);
     char buf1[8], buf2[8], buf3[8];
-    printf(
-#ifdef _DEBUG
-        "(%02X %02X) "
-#endif //_DEBUG
-        "%s %s - %9s - %3ds x %6d = %02d:%02d:%02d - [ %s ~ %s ] %s (%s)", 
-#ifdef _DEBUG
-        m_u1, m_u2,
-#endif //_DEBUG
-        m_time.DateText(), m_time.TimeText(),
-        m_name,
-        m_interval, m_samples, hh, mm, ss,
-        m_min.Text(buf1), m_max.Text(buf2), m_avg.Text(buf3),
-        m_unit);
-    printf("\n");
+    if (g_debug == 0)
+    {
+        printf(
+            "%s %s - %9s - %3ds x %6d = %02d:%02d:%02d - [ %s ~ %s ] %s (%s)\n",
+            m_time.DateText(), m_time.TimeText(),
+            m_name,
+            m_interval, m_samples, hh, mm, ss,
+            m_min.Text(buf1), m_max.Text(buf2), m_avg.Text(buf3),
+            m_unit);
+    }
+    else
+    {
+        printf(
+            "(%02X %02X) %s %s - %9s - %3ds x %6d = %02d:%02d:%02d - [ %s ~ %s ] %s (%s)\n",
+            m_u1, m_u2,
+            m_time.DateText(), m_time.TimeText(),
+            m_name,
+            m_interval, m_samples, hh, mm, ss,
+            m_min.Text(buf1), m_max.Text(buf2), m_avg.Text(buf3),
+            m_unit);
+    }
 }
 
 bool RecInfoPacket::LoadBody(Reader& r)
@@ -213,12 +221,13 @@ bool RecDataPacket::ExportCSV(ostream& os, DWORD offset)
     char buf[8];
     for (WORD index = 0; index < m_count; index++)
     {
-#ifdef _DEBUG
-        printf("%4d - %s %s - %s\n",
-            offset + index, 
-            m_dt[index].DateText(), m_dt[index].TimeText(), 
-            m_val[index].Text(buf));
-#endif
+        if (g_debug >= 1)
+        {
+            printf("%4d - %s %s - %s\n",
+                offset + index,
+                m_dt[index].DateText(), m_dt[index].TimeText(),
+                m_val[index].Text(buf));
+        }
         os << offset + index << ", " 
             << m_dt[index].DateText() << ", "
             << m_dt[index].TimeText() << ", "

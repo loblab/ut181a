@@ -16,3 +16,4 @@
 
 void dumpBin(const char* title, const void* pData, int len, bool outText);
 
+extern int g_debug; // global debug level
