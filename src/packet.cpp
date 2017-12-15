@@ -113,6 +113,13 @@ void TimeValue::Show()
 
 void MonitorPacket::Show()
 {
+    printf("%.3f, %s\n",
+        m_val,
+        m_unit);
+}
+
+void MonitorPacket::ShowRaw()
+{
     printf("%d - %02X %02X %02X %02X %02X - %d/%d - %f %s", 
         m_len, 
         m_head[0], m_head[1], m_head[2], m_head[3], m_head[4],

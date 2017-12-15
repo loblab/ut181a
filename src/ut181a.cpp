@@ -16,6 +16,7 @@
 #include <unistd.h>
 #include <fstream>
 #include <time.h>
+#include <sys/time.h>
 #include "ut181a.h"
 #include "debug.h"
 #include "packet.h"
@@ -187,19 +188,36 @@ int Device::ReadPacket(BYTE* buffer, int size)
 
 bool Device::Monitor(int& quit_flag)
 {
+    struct timeval t1, t2;
+    time_t now;
+
     if (!StartMonitor())
         return false;
 
     BYTE buffer[BUFFER_SIZE];
     MonitorPacket packet;
+    gettimeofday(&t1, NULL);
+    printf("Date, Time, Elapsed, Value, Unit\n");
     while (!quit_flag)
     {
         int len = ReadPacket(buffer, BUFFER_SIZE);
         if (len < 1)
             continue;
-        dumpBin("Input", buffer, len, false);
+        gettimeofday(&t2, NULL);
+        now = time(NULL);
+        if (g_debug > 0)
+            dumpBin("Input", buffer, len, false);
         if (packet.Load(buffer, len))
+        {
+            if (g_debug > 0)
+                packet.ShowRaw();
+            struct tm* tinfo = localtime(&now);
+            char tbuf[32];
+            strftime(tbuf, sizeof(tbuf), "%Y/%m/%d, %H:%M:%S", tinfo);
+            double diff = (t2.tv_sec - t1.tv_sec) + (t2.tv_usec - t1.tv_usec) / 1e6;
+            printf("%s, %.3f, ", tbuf, diff);
             packet.Show();
+        }
     }
 
     return StopMonitor();

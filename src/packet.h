@@ -150,6 +150,7 @@ class MonitorPacket : public Packet
 public:
     virtual bool LoadBody(Reader& r);
     void Show();
+    void ShowRaw();
 
 protected:
     BYTE m_head[5];
