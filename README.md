@@ -3,8 +3,8 @@
 - Features: list records, export records to CSV files
 - Platform: Linux (tested on PC, Raspberry Pi 2/3, Debian 8/9)
 - Ref: [How to hack UT181A protocol (Chinese)](http://www.freebuf.com/articles/terminal/145017.html)
-- Ver: 0.1
-- Updated: 12/13/2017
+- Ver: 0.2
+- Updated: 12/16/2017
 - Created: 5/11/2017
 - Author: loblab
 
@@ -83,4 +83,17 @@ export LD_LIBRARY_PATH=/usr/local/lib
 bin/armv7l/ut181a # Raspberry Pi
 bin/x86_64/ut181a # Intel PC
 ```
+
+### Usage examples
+
+- ut181a -h: help
+- ut181a -m: monitor mode (realtime measurement & transfer)
+- ut181a -m | tee monitor.csv: monitor and save to monitor.csv
+- ut181a -l: list saved records
+- ut181a 1 2 3: transfer recrod 1, 2, 3 to 1.csv, 2.csv, 3.csv
+
+## History
+
+- 0.2 (12/16/2017): Support command line arguments; output CSV with timestamp in monitor mode; output as precision; control output messages by debug level
+- 0.1 (5/11/2017) : PoC version, basically support monitor, transfer
 

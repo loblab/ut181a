@@ -72,7 +72,7 @@ const char* Program::help_msg =
 "    -h|--help   : help message\n"
 "    -v|--version: version info\n"
 "    -s|--serial : specify serial string if multiple devices connected\n"
-"    -m|--monitor: monitor mode\n"
+"    -m|--monitor: monitor mode (realtime measurement & transfer)\n"
 "    -l|--list   : list records\n"
 "    -d|--debug n: debug info level. default 0 for none, greater for more\n"
 "id1, id2...:\n"
