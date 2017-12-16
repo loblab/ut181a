@@ -42,22 +42,23 @@ private:
         int debug;
         const char* serial;
         int item_count;
-        const char* items[];
+        LPCSTR* items;
     } m_args;
 
 public:
     Program();
+    virtual ~Program();
     int Main(int argc, char **argv);
 
     static void SignalHandler(int signal);
 
 protected:
-    int ParseArguments(int argc, char **argv);
-    int Help();
-    int Version();
-    int Init();
-    void Done();
-    int Run();
+    virtual int ParseArguments(int argc, char **argv);
+    virtual int Help();
+    virtual int Version();
+    virtual int Init();
+    virtual void Done();
+    virtual int Run();
 };
 
 
@@ -103,6 +104,18 @@ Program::Program()
     m_args.debug = 0;
     m_args.serial = NULL;
     m_args.item_count = 0;
+    m_args.items = NULL;
+}
+
+Program::~Program()
+{
+    if (m_args.items)
+    {
+        if (g_debug >= 9)
+            printf("Free memory\n");
+        delete[] m_args.items;
+        m_args.items = NULL;
+    }
 }
 
 int Program::Help()
@@ -161,7 +174,7 @@ int Program::ParseArguments(int argc, char **argv)
         case 'd':
             m_args.debug = atoi(optarg);
             if (m_args.debug >= 9)
-                printf ("option -d with value: %d\n", m_args.debug);
+                printf("Option -d with value: %d\n", m_args.debug);
             break;
 
         case '?': 
@@ -177,10 +190,15 @@ int Program::ParseArguments(int argc, char **argv)
     }
 
     // non-option ARGV items
-    if (optind < argc)
+    m_args.item_count = argc - optind;
+    if (m_args.debug >= 9)
+        printf("Positional argument count: %d\n", m_args.item_count);
+    if (m_args.item_count > 0)
     {
+        m_args.items = new LPCSTR[m_args.item_count];
+        int i = 0;
         while (optind < argc)
-            m_args.items[m_args.item_count++] = argv[optind++];
+            m_args.items[i++] = argv[optind++];
     }
 
     return 0;
