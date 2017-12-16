@@ -67,12 +67,13 @@ const char* Program::help_msg =
 "UT181A USB communication tool\n"
 "Usage: ut181a [options] [id1] [id2] ...\n"
 "Options:\n"
-"    -h|--Help   : Help message\n"
+"    -h|--Help   : help message\n"
 "    -v|--version: version info\n"
 "    -m|--monitor: monitor mode\n"
 "    -l|--list   : list records\n"
 "    -d|--debug n: debug info level. default 0 for none, greater for more\n"
-"id1, id2: record index to dump (as CSV)\n"
+"id1, id2...:\n"
+"    record index to dump (as CSV file)\n"
 ;
 
 const char* Program::short_options = "hvd:ml";
@@ -151,7 +152,7 @@ int Program::ParseArguments(int argc, char **argv)
 
         case 'd':
             m_args.debug = atoi(optarg);
-            printf ("option -d with value: %d\n", m_args.debug);
+            //printf ("option -d with value: %d\n", m_args.debug);
             break;
 
         case '?': 
@@ -183,7 +184,7 @@ int Program::Init()
 
     if (!m_dmm.Open())
     {
-        printf("Failed to open UT181A DMM. Please check device connection.\n");
+        fprintf(stderr, "Failed to open UT181A DMM. Please check device connection.\n");
         return -1;
     }
     return 0;

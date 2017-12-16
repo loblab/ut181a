@@ -19,7 +19,7 @@
 #define CHKR(c) \
 if (!c) \
 { \
-    printf("Failed to read at line %d of %s\n", __LINE__, __FILE__); \
+    fprintf(stderr, "Failed to read at line %d of %s\n", __LINE__, __FILE__); \
     return false; \
 }
 

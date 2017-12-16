@@ -19,7 +19,7 @@
 #define CHKW(c) \
 if (!c) \
 { \
-    printf("Failed to write at line %d of %s\n", __LINE__, __FILE__); \
+    fprintf(stderr, "Failed to write at line %d of %s\n", __LINE__, __FILE__); \
     return false; \
 }
 

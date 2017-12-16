@@ -272,7 +272,7 @@ void CP211x::ShowUartConfig()
     }
     else
     {
-        printf("Error retrieving UART config: %s\n", DecodeHidUartStatus(status).c_str());
+        fprintf(stderr, "Error retrieving UART config: %s\n", DecodeHidUartStatus(status).c_str());
     }
 }
 
@@ -282,7 +282,7 @@ bool CP211x::GetUartConfig(DWORD& baudRate, BYTE& dataBits, BYTE& parity, BYTE& 
     status = HidUart_GetUartConfig(m_hDevice, &baudRate, &dataBits, &parity, &stopBits, &flowControl);
     if (status != HID_UART_SUCCESS)
     {
-        printf("Error retrieving UART config: %s\n", DecodeHidUartStatus(status).c_str());
+        fprintf(stderr, "Error retrieving UART config: %s\n", DecodeHidUartStatus(status).c_str());
         return false;
     }
     
@@ -295,7 +295,7 @@ bool CP211x::SetUartConfig(DWORD baudRate, BYTE dataBits, BYTE parity, BYTE stop
     status = HidUart_SetUartConfig(m_hDevice, baudRate, dataBits, parity, stopBits, flowControl);
     if (status != HID_UART_SUCCESS)
     {
-        printf("Failed setting UART config: %s\n", DecodeHidUartStatus(status).c_str());
+        fprintf(stderr, "Failed setting UART config: %s\n", DecodeHidUartStatus(status).c_str());
         return false;
     }
     
@@ -360,7 +360,7 @@ bool CP211x::WriteLatch(WORD latchValue, WORD latchMask)
     status = HidUart_WriteLatch(m_hDevice, latchValue, latchMask);
     if (status != HID_UART_SUCCESS)
     {
-        printf("Failed writing latch: %s\n", DecodeHidUartStatus(status).c_str());
+        fprintf(stderr, "Failed writing latch: %s\n", DecodeHidUartStatus(status).c_str());
         return false;
     }
     return true;
