@@ -147,8 +147,6 @@ bool MonitorPacket::LoadBody(Reader& r)
     {
         CHKR(r.Read(m_unit, 8))
         CHKR(r.Read(m_val2))
-        BYTE tmp;
-        CHKR(r.Read(tmp))
     }
     else
     {
