@@ -22,8 +22,8 @@ namespace UT181A {
 class Device
 {
 public:
-    Device(LPCSTR serial=NULL);
-    bool Open();
+    Device();
+    bool Open(LPCSTR serial=NULL);
     void Close();
 
     bool SendPacket(Packet& packet);
@@ -41,7 +41,6 @@ public:
 
 private:
     CP211x m_tx;
-    LPCSTR m_serial;
 };
 
 } //namespace UT181A

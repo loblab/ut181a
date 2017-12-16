@@ -46,16 +46,15 @@ bool Device::SendPacket(Packet& packet)
     return false;
 }
 
-Device::Device(LPCSTR serial)
-: m_serial(serial)
+Device::Device()
 {
 }
 
-bool Device::Open()
+bool Device::Open(LPCSTR serial)
 {
     if (g_debug >= 3)
         m_tx.ListSerial();
-    if (! m_tx.Open(m_serial))
+    if (! m_tx.Open(serial))
         return false;
     if (g_debug >= 3)
         m_tx.ShowDeviceInfo();

@@ -40,6 +40,7 @@ private:
         bool list;
         bool monitor;
         int debug;
+        const char* serial;
         int item_count;
         const char* items[];
     } m_args;
@@ -67,8 +68,9 @@ const char* Program::help_msg =
 "UT181A USB communication tool\n"
 "Usage: ut181a [options] [id1] [id2] ...\n"
 "Options:\n"
-"    -h|--Help   : help message\n"
+"    -h|--help   : help message\n"
 "    -v|--version: version info\n"
+"    -s|--serial : specify serial string if multiple devices connected\n"
 "    -m|--monitor: monitor mode\n"
 "    -l|--list   : list records\n"
 "    -d|--debug n: debug info level. default 0 for none, greater for more\n"
@@ -76,13 +78,14 @@ const char* Program::help_msg =
 "    record index to dump (as CSV file)\n"
 ;
 
-const char* Program::short_options = "hvd:ml";
+const char* Program::short_options = "hvd:s:ml";
 
 const struct option Program::long_options[] = 
 {
     {"help",     no_argument,       0, 'h'},
     {"version",  no_argument,       0, 'v'},
     {"debug",    required_argument, 0, 'd'},
+    {"serial",   required_argument, 0, 's'},
     {"monitor",  required_argument, 0, 'm'},
     {"list",     required_argument, 0, 'l'},
     {0, 0, 0, 0}
@@ -98,6 +101,7 @@ Program::Program()
     m_args.monitor = false;
     m_args.list = false;
     m_args.debug = 0;
+    m_args.serial = NULL;
     m_args.item_count = 0;
 }
 
@@ -150,6 +154,10 @@ int Program::ParseArguments(int argc, char **argv)
             m_args.list = true;
             break;
 
+        case 's':
+            m_args.serial = optarg;
+            break;
+
         case 'd':
             m_args.debug = atoi(optarg);
             if (m_args.debug >= 9)
@@ -185,9 +193,11 @@ int Program::Init()
     // Register for SIGINT events
     signal(SIGINT, SignalHandler);
 
-    if (!m_dmm.Open())
+    if (!m_dmm.Open(m_args.serial))
     {
-        fprintf(stderr, "Failed to open UT181A DMM. Please check device connection.\n");
+        fprintf(stderr, "Failed to open UT181A DMM. Please check device connection or settings.\n");
+        if (m_args.serial)
+            fprintf(stderr, "Is the serial string '%s' correct?\n", m_args.serial);
         return -1;
     }
     return 0;
