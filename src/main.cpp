@@ -152,7 +152,8 @@ int Program::ParseArguments(int argc, char **argv)
 
         case 'd':
             m_args.debug = atoi(optarg);
-            //printf ("option -d with value: %d\n", m_args.debug);
+            if (m_args.debug >= 9)
+                printf ("option -d with value: %d\n", m_args.debug);
             break;
 
         case '?': 
@@ -179,6 +180,8 @@ int Program::ParseArguments(int argc, char **argv)
 
 int Program::Init()
 {
+    if (g_debug >= 9)
+        fprintf(stderr, "Program::Init\n");
     // Register for SIGINT events
     signal(SIGINT, SignalHandler);
 
@@ -192,6 +195,8 @@ int Program::Init()
 
 void Program::Done()
 {
+    if (g_debug >= 9)
+        fprintf(stderr, "Program::Done\n");
     m_dmm.Close();
 }
 
@@ -200,7 +205,7 @@ int Program::Main(int argc, char **argv)
     int rc = ParseArguments(argc, argv);
     if (rc)
         return rc;
-
+    g_debug = m_args.debug;
     rc = Init();
     if (rc)
         return rc;
@@ -211,6 +216,8 @@ int Program::Main(int argc, char **argv)
 
 int Program::Run()
 {
+    if (g_debug >= 9)
+        fprintf(stderr, "Program::Run\n");
     if (m_args.monitor)
     {
         fprintf(stderr, "Ctrl-C to quit the monitor\n");
@@ -238,7 +245,8 @@ int Program::Run()
         return 0;
     }
 
-    return Help();
+    // If use -d option, will not print help message
+    return g_debug > 0 ? 0 : Help();
 }
 
 int main (int argc, char** argv)

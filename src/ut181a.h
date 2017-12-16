@@ -39,9 +39,6 @@ public:
     int ListRecord(int& quit_flag);
     bool ReceiveRecord(WORD index, int& quit_flag);
 
-public:
-    void Test();
-
 private:
     CP211x m_tx;
     LPCSTR m_serial;

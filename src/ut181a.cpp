@@ -46,41 +46,6 @@ bool Device::SendPacket(Packet& packet)
     return false;
 }
 
-void Device::Test()
-{
-    m_tx.ListSerial();
-    m_tx.Open();
-    usleep(2000);
-    //m_tx.ShowDeviceInfo();
-
-    //m_tx.SetUartConfig(9600, 3, HID_UART_NO_PARITY, HID_UART_SHORT_STOP_BIT, HID_UART_NO_FLOW_CONTROL);
-    m_tx.ShowUartConfig();
-
-    /*
-    DWORD baudRate;
-    BYTE dataBits;
-    BYTE parity;
-    BYTE stopBits;
-    BYTE flowControl;
-    m_tx.GetUartConfig(baudRate, dataBits, parity, stopBits, flowControl);
-    baudRate = 9600;
-    m_tx.SetUartConfig(baudRate, dataBits, parity, stopBits, flowControl);
-    m_tx.ShowUartConfig();
-    */
-
-    StartMonitor();
-    const DWORD blockSize = 37;
-    BYTE buffer[blockSize];
-    for (int i = 0; i < 20; i++)
-    {
-        m_tx.Read(buffer, blockSize);
-        //usleep(10000);
-    }
-
-    StopMonitor();
-    m_tx.Close();
-}
-
 Device::Device(LPCSTR serial)
 : m_serial(serial)
 {
@@ -88,13 +53,21 @@ Device::Device(LPCSTR serial)
 
 bool Device::Open()
 {
+    if (g_debug >= 3)
+        m_tx.ListSerial();
     if (! m_tx.Open(m_serial))
         return false;
+    if (g_debug >= 3)
+        m_tx.ShowDeviceInfo();
+    if (g_debug >= 4)
+        m_tx.ShowUartConfig();
     if (!m_tx.SetUartConfig(9600, 3, HID_UART_NO_PARITY, HID_UART_SHORT_STOP_BIT, HID_UART_NO_FLOW_CONTROL))
     {
         Close();
         return false;
     }
+    if (g_debug >= 3)
+        m_tx.ShowUartConfig();
     usleep(3000);
     return true;
 }

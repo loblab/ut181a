@@ -104,7 +104,7 @@ void CP211x:: ListSerial(int pid, int vid)
     
     if (status == HID_UART_SUCCESS)
     {
-        printf("List of CP211x serial strings\n");
+        printf("List of CP211x Serial Strings\n");
         printf("=============================\n");
         
         for (DWORD i = 0; i < numDevices; i++)
@@ -243,8 +243,6 @@ void CP211x::ShowDeviceInfo()
         printf("Product: %s\n", product);
     else
         printf("Product: %s\n", DecodeHidUartStatus(status).c_str());
-    
-    printf("\n");
 }
 
 
@@ -314,7 +312,7 @@ int CP211x::Read(BYTE* buffer, DWORD size)
     }
     if (status == HID_UART_READ_TIMED_OUT)
     {
-        printf("Read timeout: %d\n", actual);
+        fprintf(stderr, "Read timeout: %d\n", actual);
         return actual > 0 ? actual : -1;
     }
     return 0;
@@ -332,7 +330,7 @@ int CP211x::Write(const void* buffer, DWORD size)
     }
     if (status == HID_UART_WRITE_TIMED_OUT)
     {
-        printf("Write timeout: %d\n", actual);
+        fprintf(stderr, "Write timeout: %d\n", actual);
         return actual > 0 ? actual : -1;
     }
     return 0;
@@ -345,7 +343,7 @@ bool CP211x::ReadLatch(WORD& latchValue)
     status = HidUart_ReadLatch(m_hDevice, &latchValue);
     if (status != HID_UART_SUCCESS)
     {
-        printf("Value: %s\n", DecodeHidUartStatus(status).c_str());
+        fprintf(stderr, "Failed to read latch: %s\n", DecodeHidUartStatus(status).c_str());
         return false;
     }
 
@@ -360,7 +358,7 @@ bool CP211x::WriteLatch(WORD latchValue, WORD latchMask)
     status = HidUart_WriteLatch(m_hDevice, latchValue, latchMask);
     if (status != HID_UART_SUCCESS)
     {
-        fprintf(stderr, "Failed writing latch: %s\n", DecodeHidUartStatus(status).c_str());
+        fprintf(stderr, "Failed to write latch: %s\n", DecodeHidUartStatus(status).c_str());
         return false;
     }
     return true;
