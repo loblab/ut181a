@@ -1,6 +1,6 @@
 # UNI-T UT181A DMM USB Communication Tool
 
-- Features: list records, export records to CSV files
+- Features: list records, export records to CSV files, realtime monitor (higher sample rate)
 - Platform: Linux (tested on PC, Raspberry Pi 2/3, Debian 8/9)
 - Ref: [How to hack UT181A protocol (Chinese)](http://www.freebuf.com/articles/terminal/145017.html)
 - Ver: 0.2
@@ -91,6 +91,8 @@ bin/x86_64/ut181a # Intel PC
 - ut181a -m | tee monitor.csv: monitor and save to monitor.csv
 - ut181a -l: list saved records
 - ut181a 1 2 3: transfer recrod 1, 2, 3 to 1.csv, 2.csv, 3.csv
+- ut181a -d 3: output diagnosis info, e.g. serail string, UART
+- ut181a -s xxx: specify the serial string if you have multiple UT181A connected
 
 ## History
 
