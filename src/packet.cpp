@@ -113,7 +113,16 @@ void TimeValue::Show()
 
 void MonitorPacket::Show()
 {
-    printf("%.3f, %s\n",
+    int precision = m_r2 >> 4;  // m_r2: 0x40, 0x30, 0x20, 0x10
+    int unstable = m_r2 & 0xf;  // m_r2: 0x13 (when switching between ranges)
+    if (unstable)
+    {
+        printf("N/A\n");
+        return;
+    }
+    char fmt[16];
+    sprintf(fmt, "%%.%df, %%s\n", precision);
+    printf(fmt,
         m_val,
         m_unit);
 }
